@@ -1,0 +1,18 @@
+version: '2'
+services:
+ db:
+   image: postgres
+   container_name: db
+ web:
+   ports:
+     - "8000:8000"
+   depends_on:
+     - db
+   image: fullystacked:latest
+   container_name: web
+ integration-tester:
+   build: .
+   command: ["./wait-for-it.sh", "web:8000", "--timeout=300", "--", "python", "-m", "unittest"]
+   depends_on:
+     - web
+   container_name: integration_tester
